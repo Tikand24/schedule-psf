@@ -14,7 +14,7 @@ const Schedule = (): ReactElement => {
     useState<State['eventSelected']>(null);
 
   return (
-    <div className='min-h-[90vh]'>
+    <div className="min-h-[90vh]">
       <div className="flex flex-col items-center justify-center">
         <div className="my-8 mx-4 text-2xl font-semibold">
           {eventSelected?.title}
@@ -34,12 +34,20 @@ const Schedule = (): ReactElement => {
           </div>
         ))}
       </div>
-      {eventSelected?.events.map((evts) => (
-        <CardTimeLineEvent key={`CardTimeLineEvent${evts.id}`} event={evts} />
+      {eventSelected?.events.map((evts, index) => (
+        <CardTimeLineEvent
+          key={`CardTimeLineEvent${evts.id}`}
+          event={evts}
+          fadeInType={index % 2 == 0 ? 'left' : 'right'}
+        />
       ))}
-      {
-        eventSelected ? (<></>):(<div className='flex flex-col items-center justify-center mt-32'>No existen eventos</div>)
-      }
+      {eventSelected ? (
+        <></>
+      ) : (
+        <div className="flex flex-col items-center justify-center mt-32">
+          No existen eventos
+        </div>
+      )}
     </div>
   );
 };
