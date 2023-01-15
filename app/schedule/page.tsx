@@ -1,39 +1,58 @@
 'use client';
 
-import { ReactElement, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import { events } from '../../constants';
 import dayjs from 'dayjs';
 import { EventSchedule } from '../../typings/Event';
 import CardTimeLineEvent from '../../components/CardTimeLineEvent';
+import BtnDate from '../../components/BtnDate';
 
 interface State {
   eventSelected: EventSchedule | null;
+  dateSelected:string|null;
+  dates: string[];
 }
 const Schedule = (): ReactElement => {
   const [eventSelected, setEventSelected] =
     useState<State['eventSelected']>(null);
+    const [dateSelected, setDateSelected] =
+      useState<State['dateSelected']>(null);
+  const [dates, setDates] = useState<State['dates']>([]);
 
+  useEffect(() => {
+    const datesPar: string[] = [];
+    for (let i = 4; i >= 1; i--) {
+      datesPar.push(dayjs().subtract(i, 'd').format('YYYY-MM-DD'));
+    }
+    for (let i = 0; i < 20; i++) {
+      datesPar.push(dayjs().add(i, 'd').format('YYYY-MM-DD'));
+    }
+    setDates(datesPar);
+  }, []);
+  const handleClickBtnDate = (e: string) => {
+    setDateSelected(e);
+    const find = events.find(evt=>dayjs(evt.date).format('YYYY-MM-DD') == dayjs(e).format('YYYY-MM-DD'));
+    if(find){
+      setEventSelected(find);
+    }else{
+      setEventSelected(null);
+    }
+  };
   return (
     <div className="min-h-[90vh]">
       <div className="flex flex-col items-center justify-center">
         <div className="my-8 mx-4 text-2xl font-semibold">
           {eventSelected?.title}
         </div>
-        {events.map((ev) => (
-          <div
-            key={`dates${ev.id}`}
-            onClick={() => setEventSelected(ev)}
-            className={`${
-              eventSelected
-                ? 'bg-primary-blue text-white border-white'
-                : 'bg-white text-primary-blue border-primary-blue'
-            }  cursor-pointer rounded-lg shadow-2xl shadow-primary-blue/50 hover:shadow-primary-blue w-16 h-16 flex flex-col items-center justify-center  font-bold`}
-          >
-            <div>{dayjs(ev.date).format('MMM')}</div>
-            <div>{dayjs(ev.date).format('MM')}</div>
+      </div>
+      <div className="overflow-x-auto flex pb-3">
+        {dates.map((d, index) => (
+          <div className="flex-none" key={`btnDateSchedule2${index}`}>
+            <BtnDate dateSelected={dateSelected} eventDate={d} onClickBtn={()=>handleClickBtnDate(d)}/>
           </div>
         ))}
       </div>
+      <div className='mt-10'>
       {eventSelected?.events.map((evts, index) => (
         <CardTimeLineEvent
           key={`CardTimeLineEvent${evts.id}`}
@@ -41,6 +60,7 @@ const Schedule = (): ReactElement => {
           fadeInType={index % 2 == 0 ? 'left' : 'right'}
         />
       ))}
+      </div>
       {eventSelected ? (
         <></>
       ) : (

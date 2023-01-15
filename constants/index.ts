@@ -3,7 +3,7 @@ import { EventSchedule } from '../typings/Event';
 export const events: EventSchedule[] = [
   {
     id: 1,
-    date: new Date('2023-02-22 06:00:00'),
+    date: new Date('2023-01-15 06:00:00'),
     title: 'Miercoles de ceniza',
     events: [
       {
